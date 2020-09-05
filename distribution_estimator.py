@@ -3,7 +3,7 @@ import random
 import matplotlib.pyplot as plt
 import importlib
 
-spec = importlib.util.spec_from_file_location("nn", "/Users/alexsmyth/git/neural-network/main.py")
+spec = importlib.util.spec_from_file_location("nn", "C:/Users/Alex/git/neural-network/main.py")
 nn = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(nn)
 
@@ -113,7 +113,6 @@ for q in range(random_runs):
 		print(best_fitness)
 		gen_data(ag)
 '''
-
 
 plt.scatter(xs, ys)
 for q in range(len(all_xs)):

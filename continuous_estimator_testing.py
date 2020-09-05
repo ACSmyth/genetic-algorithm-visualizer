@@ -6,7 +6,7 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import importlib
-spec = importlib.util.spec_from_file_location("nn", "C:/Users/Alex/Desktop/neural-network/main.py")
+spec = importlib.util.spec_from_file_location("nn", "C:/Users/Alex/git/neural-network/main.py")
 nn = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(nn)
 
@@ -37,14 +37,10 @@ def fitness(agent):
     avg_diff = 0
     highest_diff = 0
     for inp in xs:
-        inp_arr = [0 for q in range(num_inps)]
-        inp_idx = int(lerp(inp, x_min, x_max, 0, num_inps))
-        inp_arr[inp_idx] = 1
+        inp_lerped = lerp(inp, x_min, x_max, 0, 1)
+        inp_arr = [inp_lerped]
 
-
-        ys = [n.val for n in agent.forward_propagate(inp_arr)]
-        y = ys.index(max(ys))
-        y = lerp(y, 0, num_outs, y_min, y_max)
+        y = lerp(agent.forward_propagate([lerp(x, x_min, x_max, 0, 1)])[0].val, 0, 1, y_min, y_max)
 
         output_translated = y
         expected = func(inp)
@@ -68,27 +64,20 @@ def gen_data(agent):
     while x <= x_max:
         agent_xs.append(x)
 
-        inp_arr = [0 for q in range(num_inps)]
-        inp_idx = int(lerp(x, x_min, x_max, 0, num_inps))
-        inp_arr[inp_idx] = 1
+        inp = lerp(x, x_min, x_max, 0, 1)
+        inp_arr = [inp]
 
-        #y = lerp(agent.forward_propagate([lerp(x, x_min, x_max, 0, 1)])[0].val, 0, 1, y_min, y_max)
-        ys = [n.val for n in agent.forward_propagate(inp_arr)]
-        y = ys.index(max(ys))
-        y = lerp(y, 0, num_outs, y_min, y_max)
-
+        y = lerp(agent.forward_propagate([lerp(x, x_min, x_max, 0, 1)])[0].val, 0, 1, y_min, y_max)
         agent_ys.append(y)
         x += inc
+
     all_xs.append(agent_xs)
     all_ys.append(agent_ys)
     fitnesses.append(fitness(agent))
 
 
-num_inps = 30
-num_outs = 30
-
-agent = nn.NeuralNetwork([num_inps,40,num_outs])
-overall_runs = 200
+agent = nn.NeuralNetwork([1,10,10,1])
+overall_runs = 5000
 batch_runs = num_data_pts
 prev_percent = 0
 best_fit = -99999999999
@@ -98,23 +87,25 @@ prev = None
 for q in range(overall_runs):
     for z in range(batch_runs):
         raw_inp = xs[z]
-
-        inp = [0 for q in range(num_inps)]
-        inp_idx = int(lerp(raw_inp, x_min, x_max, 0, num_inps))
-        inp[inp_idx] = 1
+        inp = lerp(raw_inp, x_min, x_max, 0, 1)
+        inp_arr = [inp]
 
         #inp_normalized = lerp(inp, x_min, x_max, 0, 1)
-        res = agent.forward_propagate(inp)
+        res = agent.forward_propagate(inp_arr)
         #print([e.val for e in res])
 
-        correct_output_idx = int(lerp(func(raw_inp), y_min, y_max, 0, num_outs))
-        correct_output = [0 for q in range(num_outs)]
-        correct_output[correct_output_idx] = 1
-
-        agent.back_propagate_queue_weight_changes(correct_output, 0.2)
+        correct_output = [lerp(func(raw_inp), y_min, y_max, 0, 1)]
+        agent.back_propagate_queue_weight_changes(correct_output, learning_rate = 0.01)
 
     agent.make_weight_changes()
     gen_data(agent)
+
+    '''
+    for p in range(len(agent.layers[1].neurons)):
+        neur = agent.layers[1].neurons[p]
+        for idx in range(len(neur.weights)):
+            neur.weights[idx] += 0.01 * (random.random() - 0.5)
+    '''
 
     # draw data
     for event in pygame.event.get():
