@@ -40,7 +40,7 @@ def fitness(agent):
         inp_lerped = lerp(inp, x_min, x_max, 0, 1)
         inp_arr = [inp_lerped]
 
-        y = lerp(agent.forward_propagate([lerp(x, x_min, x_max, 0, 1)])[0].val, 0, 1, y_min, y_max)
+        y = lerp(agent.forward_propagate(inp_arr)[0].val, 0, 1, y_min, y_max)
 
         output_translated = y
         expected = func(inp)
@@ -67,7 +67,7 @@ def gen_data(agent):
         inp = lerp(x, x_min, x_max, 0, 1)
         inp_arr = [inp]
 
-        y = lerp(agent.forward_propagate([lerp(x, x_min, x_max, 0, 1)])[0].val, 0, 1, y_min, y_max)
+        y = lerp(agent.forward_propagate(inp_arr)[0].val, 0, 1, y_min, y_max)
         agent_ys.append(y)
         x += inc
 
