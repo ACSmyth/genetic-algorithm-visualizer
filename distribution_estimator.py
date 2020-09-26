@@ -17,16 +17,14 @@ pygame.display.set_caption('Neural Network')
 screen = pygame.display.set_mode([w, h])
 
 
-
-
 def lerp(x, a, b, c, d):
     return (((d - c) / (b - a)) * (x - a)) + c
 
 # estimate distributions with genetic algorithm
 
-func = lambda x: math.sin(x)
+func = lambda x: math.sin(x-1)
 x_min, x_max = 0, 5
-y_min, y_max = -1, 1
+y_min, y_max = -1.2, 1.2
 
 num_data_pts = 30
 xs = []
@@ -57,7 +55,6 @@ def run_game_func(agent, input_func):
 
 def fitness_func(state):
     return -state
-
 
 
 all_xs = []
