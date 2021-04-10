@@ -6,7 +6,9 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import importlib
-spec = importlib.util.spec_from_file_location("nn", "C:/Users/Alex/git/neural-network/main.py")
+with open('neural-network-location.txt', 'r') as f:
+    path = f.read()
+spec = importlib.util.spec_from_file_location("nn", path)
 nn = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(nn)
 
@@ -52,6 +54,7 @@ def fitness(agent):
 all_xs = []
 all_ys = []
 fitnesses = []
+
 
 def gen_data(agent):
     global all_xs
