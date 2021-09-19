@@ -5,10 +5,7 @@ import importlib
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
-
-spec = importlib.util.spec_from_file_location("nn", "C:/Users/Alex/git/neural-network/main.py")
-nn = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(nn)
+from nnlib.genetic_algorithm import GeneticAlgorithm
 
 
 w, h = 700, 700
@@ -79,12 +76,15 @@ def gen_data(agent):
     all_ys.append(agent_ys)
 
 best_fitness = -999999999
-gen = nn.GeneticAlgorithm([1, 10, 5, 1], 100, 1, input_func, run_game_func, fitness_func)
-runs = 500
-prev_percent = 0
+gen = GeneticAlgorithm([1, 10, 5, 1], 100, 1, input_func, run_game_func, fitness_func)
+runs = 5000
 fitnesses = []
 last_injected = 0
 for q in range(runs):
+    for event in pygame.event.get():
+        if event == pygame.QUIT:
+            pygame.quit()
+
     gen.run_generation()
     gen_data(gen.get_best_agent()[0])
 
@@ -104,52 +104,27 @@ for q in range(runs):
     screen.fill((255, 255, 255))
     xs0 = all_xs[len(all_xs)-1]
     ys0 = all_ys[len(all_xs)-1]
+
+    fit = gen.get_best_agent()[1]
+    fitnesses.append(fit)
+
+    #if fit > best_fitness:
     draw(xs, ys, (255, 0, 0))
     draw(xs0, ys0, (0,0,0), lines=True)
     pygame.display.flip()
 
 
-    fit = gen.get_best_agent()[1]
-    fitnesses.append(fit)
     last_injected += 1
     if last_injected > 30 and q >= 30 and abs(fitnesses[q-30] - fit) < 0.01:
         last_injected = 0
         # inject mutation
-        print('injecting more mutation')
+        print('Injecting more mutation')
         for ag in gen.population:
             for z in range(30):
                 ag[0].mutate()
 
     if fit > best_fitness:
         best_fitness = fit
-        print('new best fitness: ' + str(best_fitness))
-    cur_percent = int(100*(q+1)/runs)
-    if cur_percent > prev_percent:
-        print(str(cur_percent) + '%')
-        prev_percent = cur_percent
+        print('New best fitness: ' + str(1+best_fitness))
+
 pygame.quit()
-
-'''
-prev_percent = 0
-random_runs = 50000
-for q in range(random_runs):
-    cur_percent = int(100*(q+1)/random_runs)
-    if cur_percent > prev_percent:
-        print('random: ' + str(cur_percent) + '%\n\n')
-        prev_percent = cur_percent
-    ag = nn.NeuralNetwork([1, 10, 1])
-    fit = fitness_func(run_game_func(ag, input_func))
-    if fit > best_fitness:
-        best_fitness = fit
-        print(best_fitness)
-        gen_data(ag)
-'''
-
-'''
-plt.scatter(xs, ys)
-for q in range(len(all_xs)):
-    agent_xs = all_xs[q]
-    agent_ys = all_ys[q]
-    plt.scatter(agent_xs, agent_ys)
-plt.show()
-'''
