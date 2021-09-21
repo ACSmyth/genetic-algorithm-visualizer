@@ -1,6 +1,6 @@
 # Genetic Algorithm Visualizer
 
-Real-time visualization of a genetic algorithm modelling a distribution.
+Real-time visualization of a genetic algorithm modeling a distribution.
 
 ![](https://github.com/ACSmyth/genetic-algorithm-visualizer/blob/media/modelling.gif)
 
