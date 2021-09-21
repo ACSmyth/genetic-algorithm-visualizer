@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git clone https://www.github.com/ACSmyth/neural-network.git
+mv neural-network nnlib
+pip3 install -r requirements.txt
