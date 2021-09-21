@@ -1,5 +1,6 @@
 import math
 import random
+import sys
 import matplotlib.pyplot as plt
 import importlib
 from os import environ
@@ -82,8 +83,10 @@ fitnesses = []
 last_injected = 0
 for q in range(runs):
     for event in pygame.event.get():
-        if event == pygame.QUIT:
+        if event.type == pygame.QUIT:
+            pygame.display.quit()
             pygame.quit()
+            sys.exit()
 
     gen.run_generation()
     gen_data(gen.get_best_agent()[0])
