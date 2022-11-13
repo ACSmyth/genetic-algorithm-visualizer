@@ -45,7 +45,7 @@ def run_game_func(agent, input_func):
     highest_diff = 0
     for inp in xs:
         inp_normalized = lerp(inp, x_min, x_max, 0, 1)
-        raw_out = agent.forward_propagate(input_func([inp_normalized, None]))[0].val
+        raw_out = agent.forward_propagate(input_func([inp_normalized, None]))[0]
         output_translated = lerp(raw_out, 0, 1, y_min, y_max)
         expected = func(inp)
         highest_diff = max(abs(output_translated - expected), highest_diff)
@@ -70,7 +70,7 @@ def gen_data(agent):
     agent_ys = []
     while x <= x_max:
         agent_xs.append(x)
-        y = lerp(agent.forward_propagate(input_func([lerp(x, x_min, x_max, 0, 1), None]))[0].val, 0, 1, y_min, y_max)
+        y = lerp(agent.forward_propagate(input_func([lerp(x, x_min, x_max, 0, 1), None]))[0], 0, 1, y_min, y_max)
         agent_ys.append(y)
         x += inc
     all_xs.append(agent_xs)
